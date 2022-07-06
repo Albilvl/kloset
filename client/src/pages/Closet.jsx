@@ -1,10 +1,13 @@
 import {React, useState} from "react";
-import { Input } from "rsuite";
+import { Input, Panel } from "rsuite";
 import ItemCard from "../components/ItemCard";
+import {useNavigate} from "react-router-dom"
 
-function Closet() {
+function Closet({user}) {
      
     const[itemSearch, setItemSearch] = useState("")
+
+    let navigate = useNavigate()
 
 
     const items = [
@@ -60,6 +63,27 @@ function Closet() {
           },
     ]
 
+    const instance = (
+      <div className = "add" >
+        <Panel
+          shaded
+          bordered
+          bodyFill
+          style={{ display: "inline-block", width: 240 }}
+        >
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Squared_plus.svg/1200px-Squared_plus.svg.png"
+            height="240"
+            onClick={() => {
+              navigate("/login");
+            }}
+          />
+          <Panel header="GRAIL" className="rs-theme-dark">
+            <p>Add your newest item.</p>
+          </Panel>
+        </Panel>
+      </div>
+    );
 
 
     const displayedItems = items.filter((piece) => {
@@ -73,12 +97,13 @@ function Closet() {
 
   return (
     <div className="closet">
-      <h1>User's Closet</h1>
+      <h1>{user.username}'s Closet</h1>
       <h3>ADD, ORGANIZE, SORT, DELETE AND MANAGE EVERYTHING IN YOUR Closet</h3>
       <hr />
       <Input placeholder="Search......"  onChange={(e)=>{setItemSearch(e)}}/>
       <hr/>
       <div className="itemContainer">
+        {instance}
           {displayedItems.map(item =>(
           <ItemCard item= {item} key ={item.id}/>
       ))}

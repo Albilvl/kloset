@@ -2,8 +2,13 @@ import React from "react";
 import {useNavigate} from 'react-router-dom';
 import { Container, Dropdown, Header, Nav, Navbar, Toggle, Content } from "rsuite";
 
-function Topbar({darkMode}) {
+function Topbar({darkMode, loggedIn, user,logOut}) {
   let navigate = useNavigate()
+
+  function handlelogOut (){
+    logOut()
+    navigate("/")
+  }
   
   return (
     <Container>
@@ -11,13 +16,15 @@ function Topbar({darkMode}) {
         <Navbar className="rs-theme-dark">
           <Navbar.Brand
             onClick={() => {
-              // navigate("/");
+              navigate("/");
             }}
           >
             KLOSET
           </Navbar.Brand>
+{
+  loggedIn ? 
+<>
 
-          <>
             <Nav>
               <Nav.Item
                 onClick={() => {
@@ -55,39 +62,30 @@ function Topbar({darkMode}) {
                   <Toggle size="sm" defaultChecked  onClick={darkMode}/>
                 </Nav.Item>
               
-                <Nav.Menu title="USER">
+                <Nav.Menu title={user.username}>
                   <Nav.Item
-                  >
-                    Edit Profile
-                  </Nav.Item>
-                  <Nav.Item
-                  // onClick={() => handlelogOut()}
+                  onClick={() => handlelogOut()}
                   >
                     Log Out
                   </Nav.Item>
                 </Nav.Menu>
               </Nav>
             </Nav>
-          </>
+</>
+  :
+ <>
+  <Nav pullRight>
+    <Nav.Item
+    onClick={() => {
+      navigate("/login")
+    }}
+    >
+      Login
+    </Nav.Item>
+  </Nav>
+</>
+}
         </Navbar>
-        {/* <Modal
-                  open={show}
-                  onClose={handleClose}
-                  >
-                  <Modal.Header closeButton>
-                      <Modal.Title>Your Cart</Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                      <Cart 
-                      // userData={userData}
-                      // cartItem={cartItem}
-                      // setCartItem={setCartItem}
-                  />
-                  </Modal.Body>
-                  <Modal.Footer>
-                      <Button onClick={() => alert("Get your money up not your funny up!")} >Checkout</Button>
-                  </Modal.Footer>
-              </Modal>   */}
       </Header>
     </Container>
   );

@@ -1,2 +1,52 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+    rescue_from ActiveRecord::RecordInvalid, with: :render_record_invalid
+
+    before_action :authorized
+
+    def encode_token(payload)
+        JWT.encode(payload, "put your secret password here")
+    end
+    
+    def auth_header
+        request.headers['Authorization']
+    end
+    
+    def decoded_token
+        if auth_header
+            token = auth_header.split(' ')[1]
+            begin
+                JWT.decode(token, "put your secret password here", true, algorithm: 'HS256')
+            rescue JWT::DecodeError
+                nil
+            end
+        end
+    end
+    
+    def current_user
+        if decoded_token
+            user_id = decoded_token[0]['user_id']
+            @user = User.find_by(id: user_id)
+            
+        end
+    end
+    
+    def logged_in?
+        !!current_user
+    end
+    
+    def authorized
+        render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
+    end
+
+    private
+    def render_not_found(error)
+        render json: {error: "#{error.model} not found"},
+        status: :not_found
+    end
+
+    def render_record_invalid(error)
+        render json: {errors: error.record.errors.full_messages},
+        status: :unprocessable_entity
+    end
 end

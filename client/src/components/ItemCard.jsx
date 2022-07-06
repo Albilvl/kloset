@@ -1,5 +1,6 @@
 import { React, useState } from "react";
-import { Button, Divider, Form, Modal, SelectPicker, Panel } from "rsuite";
+import { Button, Divider, Form, Modal, SelectPicker, Panel, Toggle } from "rsuite";
+import {MdOutlineLocalLaundryService} from 'react-icons/md'
 
 function ItemCard({item}) {
   const [open, setOpen] = useState(false);
@@ -10,7 +11,7 @@ function ItemCard({item}) {
     textarea: "",
   });
 
-  const selectData = ["tracy", "tory"];
+  
 
   const handleClose = () => {
     setOpen(false);
@@ -30,7 +31,9 @@ function ItemCard({item}) {
         <img   src= {item.image} height="240"  />
         <Panel header={item.brand}  className="rs-theme-dark">
             <p>{item.name}</p>
-            <br/>
+        <MdOutlineLocalLaundryService />
+        <Toggle size="sm" checkedChildren="DIRTY" unCheckedChildren="CLEAN" />
+        <br/>
         <Button appearance="primary">Remove</Button>
         <Divider vertical className="rs-theme-light" />
         <Button onClick={handleOpen} appearance="primary">

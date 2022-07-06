@@ -85,3 +85,21 @@
   height: 18vh;
   overflow: scroll;
 }
+
+.timeline{
+  /* width: 20%; */
+  float: left;
+}
+
+
+
+
+.add:hover {
+  transform: translate3d(-0.1vw, -0.3vw, 0px);
+  transform: scale(1.06);
+  transition: all 0.1s;
+}
+
+.needed{
+  text-transform: none;
+}
