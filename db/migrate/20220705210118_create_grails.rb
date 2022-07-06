@@ -7,6 +7,7 @@ class CreateGrails < ActiveRecord::Migration[6.1]
       t.string :occasion
       t.string :color
       t.string :link
+      t.string :image
 
       t.timestamps
     end

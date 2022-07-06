@@ -2,7 +2,7 @@ import { React, useState } from "react";
 import { Button, Divider, Form, Modal, SelectPicker, Panel, Toggle } from "rsuite";
 import {MdOutlineLocalLaundryService} from 'react-icons/md'
 
-function ItemCard({item}) {
+function ItemCard({item, handleClick}) {
   const [open, setOpen] = useState(false);
   const [formValue, setFormValue] = useState({
     name: "",
@@ -34,7 +34,7 @@ function ItemCard({item}) {
         <MdOutlineLocalLaundryService />
         <Toggle size="sm" checkedChildren="DIRTY" unCheckedChildren="CLEAN" />
         <br/>
-        <Button appearance="primary">Remove</Button>
+        <Button appearance="primary" onClick={()=>{handleClick(item)}}>Remove</Button>
         <Divider vertical className="rs-theme-light" />
         <Button onClick={handleOpen} appearance="primary">
           Change

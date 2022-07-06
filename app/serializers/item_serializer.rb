@@ -1,3 +1,3 @@
 class ItemSerializer < ActiveModel::Serializer
-  attributes :id, :name, :type, :weather, :occasion, :color, :dirty
+  attributes :id, :name, :item_type, :weather, :occasion, :color, :dirty, :brand, :image
 end

@@ -6,6 +6,7 @@ class CreateItems < ActiveRecord::Migration[6.1]
       t.string :weather
       t.string :occasion
       t.string :color
+      t.string :image
       t.boolean :dirty
 
       t.timestamps

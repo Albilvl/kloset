@@ -10,31 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_05_221241) do
+ActiveRecord::Schema.define(version: 2022_07_06_020014) do
 
   create_table "grails", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.string "grail_type"
     t.string "weather"
     t.string "occasion"
     t.string "color"
     t.string "link"
+    t.string "image"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id", null: false
+    t.string "brand"
     t.index ["user_id"], name: "index_grails_on_user_id"
   end
 
   create_table "items", force: :cascade do |t|
     t.string "name"
-    t.string "type"
+    t.string "item_type"
     t.string "weather"
     t.string "occasion"
     t.string "color"
+    t.string "image"
     t.boolean "dirty"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "user_id", null: false
+    t.string "brand"
     t.index ["user_id"], name: "index_items_on_user_id"
   end
 

@@ -9,8 +9,8 @@ function ProfilePage({user}) {
       <Avatar
         size="lg"
         circle
-        src="https://avatars.githubusercontent.com/u/12592949"
-        alt="@SevenOutman"
+        src={user.avatar}
+        alt={user.username}
       />
       <h3>Your Information:</h3>
       <h5>Top Size: {user.top_size}</h5>
