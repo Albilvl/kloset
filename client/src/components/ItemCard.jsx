@@ -1,17 +1,18 @@
 import { React, useState } from "react";
-import { Button, Divider, Form, Modal, SelectPicker, Panel, Toggle } from "rsuite";
-import {MdOutlineLocalLaundryService} from 'react-icons/md'
+import { MdOutlineLocalLaundryService } from "react-icons/md";
+import {
+  Button,
+  Divider,
+  Form,
+  Modal,
+  Panel,
+  SelectPicker,
+  Toggle,
+} from "rsuite";
 
-function ItemCard({item, handleClick}) {
+function ItemCard({ item, handleClick }) {
   const [open, setOpen] = useState(false);
-  const [formValue, setFormValue] = useState({
-    name: "",
-    email: "",
-    password: "",
-    textarea: "",
-  });
-
-  
+  const [updatedClean, setUpdatedClean] = useState(!item.dirty);
 
   const handleClose = () => {
     setOpen(false);
@@ -20,25 +21,60 @@ function ItemCard({item, handleClick}) {
     setOpen(true);
   };
 
+  function handleLaundry() {
+    fetch(`/laundry/${item.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.token}`,
+      },
+      body: JSON.stringify({
+        dirty: updatedClean,
+      }),
+    }).then((r) => {
+      if (r.ok) {
+        r.json().then((item) => {
+          setUpdatedClean(!item.dirty);
+        });
+      } else {
+        r.json().then((e) => alert(e.errors));
+      }
+    });
+  }
+
   return (
-    <div className = "itemCard" >
-      <Panel
-        shaded
-        // bordered
-        bodyFill
-        style={{ display: "inline-block", width: 240 }}
-      >
-        <img   src= {item.image} height="240"  />
-        <Panel header={item.brand}  className="rs-theme-dark">
-            <p>{item.name}</p>
-        <MdOutlineLocalLaundryService />
-        <Toggle size="sm" checkedChildren="DIRTY" unCheckedChildren="CLEAN" />
-        <br/>
-        <Button appearance="primary" onClick={()=>{handleClick(item)}}>Remove</Button>
-        <Divider vertical className="rs-theme-light" />
-        <Button onClick={handleOpen} appearance="primary">
-          Change
-        </Button>
+    <div className="itemCard">
+      <Panel shaded bodyFill style={{ display: "inline-block", width: 240 }}>
+        <img src={item.image} height="240" />
+        <Panel header={item.brand} className="rs-theme-dark">
+          <p>{item.name}</p>
+          {item.dirty !== undefined ? (
+            <>
+              <MdOutlineLocalLaundryService />
+              <Toggle
+                size="sm"
+                checkedChildren="DIRTY"
+                unCheckedChildren="CLEAN"
+                onClick={handleLaundry}
+              />
+            </>
+          ) : (
+            " "
+          )}
+          <br />
+          <Button
+            appearance="primary"
+            onClick={() => {
+              handleClick(item);
+            }}
+          >
+            Remove
+          </Button>
+          <Divider vertical className="rs-theme-light" />
+          <Button onClick={handleOpen} appearance="primary">
+            Change
+          </Button>
         </Panel>
       </Panel>
       <Modal open={open} onClose={handleClose} size="xs">
@@ -46,7 +82,7 @@ function ItemCard({item, handleClick}) {
           <Modal.Title>Edit Item</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form fluid onChange={setFormValue} formValue={formValue}>
+          <Form fluid>
             <Form.Group controlId="name-9">
               <Form.ControlLabel>Name</Form.ControlLabel>
               <Form.Control name="name" />

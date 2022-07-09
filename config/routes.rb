@@ -6,7 +6,13 @@ Rails.application.routes.draw do
 
   #Items
   get '/myItems', to: "users#myItems"
-  # delete '/items/:id', to: "items#destroy"
+  delete '/items/:id', to: "items#destroy"
+  patch '/laundry/:id', to: 'items#laundry'
+  get 'myLaundry', to: 'users#myLaundry'
+
+  #Grails
+  get '/myGrails', to: "users#myGrails"
+  delete '/grails/:id', to: "grails#destroy"
  
   # AUTHENTICATION
   post "/newaccount", to: "users#create"

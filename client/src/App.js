@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login";
 import Topbar from "./components/Topbar";
+import Basket from "./pages/Basket";
 import Closet from "./pages/Closet";
 import Errorpage from "./pages/Errorpage";
 import Grails from "./pages/Grails";
@@ -89,6 +90,7 @@ function App() {
               element={<Login setCurrentUser={setCurrentUser} setColorB={setColorB} setColorA={setColorA}/>}
             />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/basket" element={<Basket user={user} />} />
             <Route path="*" element={<Errorpage />} />
           </Routes>
         </div>

@@ -1,3 +1,3 @@
 class GrailSerializer < ActiveModel::Serializer
-  attributes :id, :name, :type, :weather, :occasion, :color, :link
+  attributes :id, :name, :grail_type, :weather, :occasion, :color, :link, :image, :brand
 end

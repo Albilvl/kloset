@@ -21,6 +21,11 @@ class UsersController < ApplicationController
         render json: @current_user
     end
 
+    def myLaundry
+        items = current_user.items.where(dirty: true)
+        render json: items
+    end
+
     private
     def user_params
         params.permit(:username, :password, :email, :top_size, :pants_size, :shoe_size, :avatar, :color1, :color2)

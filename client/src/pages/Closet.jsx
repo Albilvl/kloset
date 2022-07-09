@@ -1,6 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Modal, Panel, SelectPicker } from "rsuite";
+import { Button, Divider, Form, Input, Modal, Panel, SelectPicker } from "rsuite";
 import ItemCard from "../components/ItemCard";
 
 function Closet({ user }) {
@@ -17,6 +17,11 @@ function Closet({ user }) {
   const [color, setColor] = useState("");
   const [dirty, setDirty] = useState("");
   const [image, setImage] = useState("");
+
+  const [occasionFilter, setOccasionFilter] = useState("")
+  const [weatherFilter, setWeatherFilter] = useState("")
+  const [item_typeFilter, setItem_TypeFilter] = useState("")
+
 
   const typeOptions = [
     {
@@ -119,6 +124,10 @@ function Closet({ user }) {
       label: "Casual",
       value: "Casual",
     },
+    {
+      label: "Both",
+      value: "Both",
+    },
   ];
 
   const handleClose = () => {
@@ -127,64 +136,6 @@ function Closet({ user }) {
   const handleOpen = () => {
     setOpen(true);
   };
-
-  const items = [
-    {
-      id: 1,
-      name: "Logo Tee",
-      brand: "Balenciaga",
-      image:
-        "https://balenciaga.dam.kering.com/m/6de9b3c17e12d71d/Medium-641675TKVJ19034_F.jpg?v=1",
-      type: "jacket",
-      weather: "overcast",
-      occassion: "Casual",
-      color: "blue",
-    },
-    {
-      id: 2,
-      name: "Green Monster Jacket",
-      brand: "Balenciaga",
-      image:
-        "https://balenciaga.dam.kering.com/m/33a5bcda606d45d/Medium-704502TKQ073001_F.jpg?v=2",
-      type: "jacket",
-      weather: "overcast",
-      occassion: "Night out",
-      color: "blue",
-    },
-    {
-      id: 3,
-      name: "Ripped Everyday Denim",
-      brand: "Gucci",
-      image:
-        "https://media.gucci.com/style/DarkGray_Center_0_0_800x800/1595320207/623953_XDBFM_4009_001_100_0000_Light-Ripped-eco-bleached-organic-denim-pant.jpg",
-      type: "jacket",
-      weather: "overcast",
-      occassion: "Night out",
-      color: "blue",
-    },
-    {
-      id: 4,
-      name: "1921 Sweatshirt",
-      brand: "Gucci",
-      image:
-        "https://media.gucci.com/style/DarkGray_Center_0_0_800x800/1633644909/617964_XJDZE_9088_001_100_0000_Light-Crystal-1921-Gucci-sweatshirt.jpg",
-      type: "jacket",
-      weather: "overcast",
-      occassion: "Night out",
-      color: "blue",
-    },
-    {
-      id: 5,
-      name: "Downtown Leather Sneakers",
-      brand: "Prada",
-      image:
-        "https://www.prada.com/content/dam/pradabkg_products/2/2EE/2EE364/3LKGF098Z/2EE364_3LKG_F098Z_SLR.jpg/jcr:content/renditions/cq5dam.web.hebebed.1250.1250.jpg,https://www.prada.com/content/dam/pradabkg_products/2/2EE/2EE364/3LKGF098Z/2EE364_3LKG_F098Z_SLR.jpg/jcr:content/renditions/cq5dam.web.hebebed.2000.2000.jpg",
-      type: "shoes",
-      weather: "overcast",
-      occassion: "Night out",
-      color: "blue",
-    },
-  ];
 
   const instance = (
     <div className="add">
@@ -206,12 +157,33 @@ function Closet({ user }) {
     </div>
   );
 
-  const displayedItems = myArray.filter((piece) => {
+
+
+
+  const filteredClothes = myArray.filter(item => 
+    item.occasion === occasionFilter || item.occasion === "Any" || occasionFilter === ""
+    ).filter(item => 
+        item.weather === weatherFilter || item.weather === "Any" || weatherFilter === ""
+    ).filter(item => 
+        item.item_type === item_typeFilter || item_typeFilter === ""
+    ).sort(function(piece1, piece2) {
+        const date1 = new Date(piece1.created_at)
+        const date2 = new Date(piece2.created_at)
+        return date2 - date1
+    })
+
+
+  const displayedItems = filteredClothes.filter((piece) => {
     return (
       piece.name.toLowerCase().includes(itemSearch.toLowerCase()) ||
-      piece.brand.toLowerCase().includes(itemSearch.toLowerCase())
+      piece.brand.toLowerCase().includes(itemSearch.toLowerCase()) ||
+      piece.color.toLowerCase().includes(itemSearch.toLowerCase())
     );
   });
+
+
+
+
 
   function addItem() {
     setDirty(false);
@@ -260,22 +232,29 @@ function Closet({ user }) {
   }, []);
 
   function deleteItem(deletedItem) {
-    fetch(`/remove/${deletedItem.id}.`, {
+    fetch(`/items/${deletedItem.id}`, {
       method: "DELETE",
-    })
-      .then((resp) => resp.json())
-      .then(() => {
-        const updatedShoes = myArray.filter(
-          (shoe) => shoe.id !== deletedItem.id
-        );
-        setMyArray(updatedShoes);
-      });
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.token}`,
+      },
+    }).then((resp) => resp.json());
+    // .then(() => {
+    //   const updatedShoes = myArray.filter(
+    //     (shoe) => shoe.id !== deletedItem.id
+    //   );
+    //   // navigate("/grails")
+    //   // setMyArray(updatedShoes);
+    // });
   }
+
+ 
 
   return (
     <div className="closet">
       <h1>{user.username}'s Closet</h1>
-      <h3>ADD, ORGANIZE, SORT, DELETE AND MANAGE EVERYTHING IN YOUR Closet</h3>
+      <h3>ADD, ORGANIZE, SORT, DELETE AND MANAGE EVERYTHING IN YOUR ClOSET</h3>
       <hr />
       <Input
         placeholder="Search......"
@@ -283,6 +262,42 @@ function Closet({ user }) {
           setItemSearch(e);
         }}
       />
+      <br/>
+      <>
+      Need an outfit... {" "}    
+      <select onChange={(e) => setItem_TypeFilter(e.target.value)}>
+      <option value="">Any</option>
+      <option value="Jacket">Jacket</option>
+      <option value="Coat">coat</option>
+      <option value="Shirt">shirt</option>
+      <option value="T-shirt">t-shirt</option>
+      <option value="Flannel">flannel</option>
+      <option value="Cargo">cargo</option>
+      <option value="Sweats">sweats</option>
+      <option value="Jeans">jeans</option>
+      <option value="Shorts">shorts</option>
+      <option value="Jacket">Jacket</option>
+      <option value="Leggings">leggings</option>
+      <option value="Sneakers">sneakers</option>
+      <option value="Sldies">slides</option>
+      <option value="Formal">formal</option>
+      </select>
+      <Divider vertical />
+      <select onChange={(e) => setWeatherFilter(e.target.value)}>
+      <option value="">For Any Weather</option>
+      <option value="Cold">Cold</option>
+      <option value="Cool">Cool</option>
+      <option value="Warm">Warm</option>
+      <option value="Hot">Hot</option>
+      </select>
+      <Divider vertical />
+      <select onChange={(e) => setOccasionFilter(e.target.value)}>
+      <option value="">All</option>
+      <option value="Formal">Formal</option>
+      <option value="Casual">Casual</option>
+      <option value="Both">Both</option>
+      </select>
+      </>
       <hr />
       <div className="itemContainer">
         {instance}

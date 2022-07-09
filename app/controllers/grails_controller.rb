@@ -6,12 +6,23 @@ class GrailsController < ApplicationController
     end 
 
     def index
-        grails = Grail.all 
+        grails = current_user.grails.all 
         render json: grails  
     end
 
     def show 
-        grail = Grail.find(params[:id])
+        grail = current_user.grails.find(params[:id])
         render json :grail
     end
+
+    def destroy
+        grail = current_user.grails.find(params[:id])
+        grail.destroy
+    end
+
+    private 
+    def grail_params
+        params.permit(:name, :brand, :grail_type, :weather, :occasion, :color, :link, :image, :user_id)
+    end
+
 end

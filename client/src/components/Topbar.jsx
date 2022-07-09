@@ -42,10 +42,10 @@ function Topbar({darkMode, loggedIn, user,logOut}) {
               </Nav.Item>
               <Nav.Item
                 onClick={() => {
-                    navigate("/login");
+                    navigate("/basket");
                 }}
               >
-                News
+                Basket
               </Nav.Item>
               <Nav.Item
                 onClick={() => {

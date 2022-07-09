@@ -1,27 +1,35 @@
 class ItemsController < ApplicationController
 
 
-
     def  create
         item =  current_user.items.create!(item_params)
         render json: item, status: :created
     end
 
     def index
-        items = Item.all 
+        items = current_user.items.all 
         render json: items  
     end
 
     def show 
-        item = Item.find(params[:id])
+        item = current_user.items.find(params[:id])
         render json :item
     end
 
     def destroy
-        item = Item.find(params[:id])
+        item = current_user.items.find(params[:id])
         item.destroy
         head :no_content
     end
+
+
+    def laundry 
+        item = Item.find(params[:id])
+        item.update!(:dirty => params[:dirty])
+        render json: item
+    end
+
+   
 
     private 
     def item_params
