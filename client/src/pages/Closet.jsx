@@ -1,7 +1,16 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Divider, Form, Input, Modal, Panel, SelectPicker } from "rsuite";
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Panel,
+  SelectPicker,
+} from "rsuite";
 import ItemCard from "../components/ItemCard";
+import Loading from "../components/Loading";
 
 function Closet({ user }) {
   let navigate = useNavigate();
@@ -17,11 +26,11 @@ function Closet({ user }) {
   const [color, setColor] = useState("");
   const [dirty, setDirty] = useState("");
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [occasionFilter, setOccasionFilter] = useState("")
-  const [weatherFilter, setWeatherFilter] = useState("")
-  const [item_typeFilter, setItem_TypeFilter] = useState("")
-
+  const [occasionFilter, setOccasionFilter] = useState("");
+  const [weatherFilter, setWeatherFilter] = useState("");
+  const [item_typeFilter, setItem_TypeFilter] = useState("");
 
   const typeOptions = [
     {
@@ -144,34 +153,40 @@ function Closet({ user }) {
         bordered
         bodyFill
         style={{ display: "inline-block", width: 240 }}
+        onClick={handleOpen}
       >
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Squared_plus.svg/1200px-Squared_plus.svg.png"
           height="240"
-          onClick={handleOpen}
         />
-        <Panel header="GRAIL" className="rs-theme-dark">
+        <Panel header="ITEM" className="rs-theme-dark">
           <p>Add your newest item.</p>
         </Panel>
       </Panel>
     </div>
   );
 
-
-
-
-  const filteredClothes = myArray.filter(item => 
-    item.occasion === occasionFilter || item.occasion === "Any" || occasionFilter === ""
-    ).filter(item => 
-        item.weather === weatherFilter || item.weather === "Any" || weatherFilter === ""
-    ).filter(item => 
-        item.item_type === item_typeFilter || item_typeFilter === ""
-    ).sort(function(piece1, piece2) {
-        const date1 = new Date(piece1.created_at)
-        const date2 = new Date(piece2.created_at)
-        return date2 - date1
-    })
-
+  const filteredClothes = myArray
+    .filter(
+      (item) =>
+        item.occasion === occasionFilter ||
+        item.occasion === "Any" ||
+        occasionFilter === ""
+    )
+    .filter(
+      (item) =>
+        item.weather === weatherFilter ||
+        item.weather === "Any" ||
+        weatherFilter === ""
+    )
+    .filter(
+      (item) => item.item_type === item_typeFilter || item_typeFilter === ""
+    )
+    .sort(function (piece1, piece2) {
+      const date1 = new Date(piece1.created_at);
+      const date2 = new Date(piece2.created_at);
+      return date2 - date1;
+    });
 
   const displayedItems = filteredClothes.filter((piece) => {
     return (
@@ -181,9 +196,10 @@ function Closet({ user }) {
     );
   });
 
-
-
-
+  function handleLoading() {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1000);
+  }
 
   function addItem() {
     setDirty(false);
@@ -214,11 +230,13 @@ function Closet({ user }) {
           alert("Error");
         } else {
           setOpen(false);
+          myfetch()
+          handleLoading();
         }
       });
   }
 
-  useEffect(() => {
+  function myfetch() {
     fetch("/myItems", {
       method: "GET",
       headers: {
@@ -229,9 +247,15 @@ function Closet({ user }) {
     })
       .then((res) => res.json())
       .then((array) => setMyArray(array));
+  }
+
+  useEffect(() => {
+    myfetch();
   }, []);
 
   function deleteItem(deletedItem) {
+    const updatedShoes = myArray.filter((shoe) => shoe.id !== deletedItem.id);
+    setMyArray(updatedShoes);
     fetch(`/items/${deletedItem.id}`, {
       method: "DELETE",
       headers: {
@@ -240,16 +264,18 @@ function Closet({ user }) {
         Authorization: `Bearer ${localStorage.token}`,
       },
     }).then((resp) => resp.json());
-    // .then(() => {
-    //   const updatedShoes = myArray.filter(
-    //     (shoe) => shoe.id !== deletedItem.id
-    //   );
-    //   // navigate("/grails")
-    //   // setMyArray(updatedShoes);
-    // });
+    handleLoading();
   }
 
- 
+  const content = (
+    <div className="itemContainer">
+      {instance}
+      {displayedItems.map((item) => (
+        <ItemCard item={item} key={item.id} handleClick={deleteItem} />
+      ))}
+      {displayedItems.length === 0 && <h3>uh oh....</h3>}
+    </div>
+  );
 
   return (
     <div className="closet">
@@ -262,50 +288,44 @@ function Closet({ user }) {
           setItemSearch(e);
         }}
       />
-      <br/>
+      <br />
       <>
-      Need an outfit... {" "}    
-      <select onChange={(e) => setItem_TypeFilter(e.target.value)}>
-      <option value="">Any</option>
-      <option value="Jacket">Jacket</option>
-      <option value="Coat">coat</option>
-      <option value="Shirt">shirt</option>
-      <option value="T-shirt">t-shirt</option>
-      <option value="Flannel">flannel</option>
-      <option value="Cargo">cargo</option>
-      <option value="Sweats">sweats</option>
-      <option value="Jeans">jeans</option>
-      <option value="Shorts">shorts</option>
-      <option value="Jacket">Jacket</option>
-      <option value="Leggings">leggings</option>
-      <option value="Sneakers">sneakers</option>
-      <option value="Sldies">slides</option>
-      <option value="Formal">formal</option>
-      </select>
-      <Divider vertical />
-      <select onChange={(e) => setWeatherFilter(e.target.value)}>
-      <option value="">For Any Weather</option>
-      <option value="Cold">Cold</option>
-      <option value="Cool">Cool</option>
-      <option value="Warm">Warm</option>
-      <option value="Hot">Hot</option>
-      </select>
-      <Divider vertical />
-      <select onChange={(e) => setOccasionFilter(e.target.value)}>
-      <option value="">All</option>
-      <option value="Formal">Formal</option>
-      <option value="Casual">Casual</option>
-      <option value="Both">Both</option>
-      </select>
+        Need an outfit...{" "}
+        <select onChange={(e) => setItem_TypeFilter(e.target.value)}>
+          <option value="">Any</option>
+          <option value="Jacket">Jacket</option>
+          <option value="Coat">coat</option>
+          <option value="Shirt">shirt</option>
+          <option value="T-shirt">t-shirt</option>
+          <option value="Flannel">flannel</option>
+          <option value="Cargo">cargo</option>
+          <option value="Sweats">sweats</option>
+          <option value="Jeans">jeans</option>
+          <option value="Shorts">shorts</option>
+          <option value="Jacket">Jacket</option>
+          <option value="Leggings">leggings</option>
+          <option value="Sneakers">sneakers</option>
+          <option value="Sldies">slides</option>
+          <option value="Formal">formal</option>
+        </select>
+        <Divider vertical />
+        <select onChange={(e) => setWeatherFilter(e.target.value)}>
+          <option value="">For Any Weather</option>
+          <option value="Cold">Cold</option>
+          <option value="Cool">Cool</option>
+          <option value="Warm">Warm</option>
+          <option value="Hot">Hot</option>
+        </select>
+        <Divider vertical />
+        <select onChange={(e) => setOccasionFilter(e.target.value)}>
+          <option value="">All</option>
+          <option value="Formal">Formal</option>
+          <option value="Casual">Casual</option>
+          <option value="Both">Both</option>
+        </select>
       </>
       <hr />
-      <div className="itemContainer">
-        {instance}
-        {displayedItems.map((item) => (
-          <ItemCard item={item} key={item.id} handleClick={deleteItem} />
-        ))}
-        {displayedItems.length === 0 && <h3>uh oh....</h3>}
-      </div>
+      {loading === true ? <Loading /> : content}
       <Modal open={open} onClose={handleClose} size="xs">
         <Modal.Header>
           <Modal.Title>Add Item</Modal.Title>

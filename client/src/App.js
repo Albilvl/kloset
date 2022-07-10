@@ -55,8 +55,6 @@ function App() {
     localStorage.token = "";
   }
 
-  
-
   // {backgroundImage: `linear-gradient(135deg, rgb(3,127,255),rgb(3,127,255) )`}
   return (
     <BrowserRouter>
@@ -87,7 +85,13 @@ function App() {
             <Route path="/grails" element={<Grails />} />
             <Route
               path="/login"
-              element={<Login setCurrentUser={setCurrentUser} setColorB={setColorB} setColorA={setColorA}/>}
+              element={
+                <Login
+                  setCurrentUser={setCurrentUser}
+                  setColorB={setColorB}
+                  setColorA={setColorA}
+                />
+              }
             />
             <Route path="/signup" element={<Signup />} />
             <Route path="/basket" element={<Basket user={user} />} />

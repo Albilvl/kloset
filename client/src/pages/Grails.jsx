@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Modal, Panel, SelectPicker } from "rsuite";
 import ItemCard from "../components/ItemCard";
+import Loading from "../components/Loading";
 
 function Grails() {
   let navigate = useNavigate();
@@ -17,6 +18,7 @@ function Grails() {
   const [color, setColor] = useState("");
   const [link, setLink] = useState("");
   const [image, setImage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const typeOptions = [
     {
@@ -155,6 +157,11 @@ function Grails() {
     </div>
   );
 
+  function handleLoading() {
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1000);
+  }
+
   function addItem() {
     const newGrail = {
       brand,
@@ -182,24 +189,32 @@ function Grails() {
           alert("Error");
         } else {
           setOpen(false);
+          myfetch()
+          handleLoading();
         }
       });
   }
 
+function myfetch() {
+  fetch("/myGrails", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Authorization: `Bearer ${localStorage.token}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((array) => setMyArray(array));
+}
+   
   useEffect(() => {
-    fetch("/myGrails", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${localStorage.token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((array) => setMyArray(array));
+    myfetch()
   }, []);
 
   function deleteItem(deletedItem) {
+    const updatedShoes = myArray.filter((shoe) => shoe.id !== deletedItem.id);
+    setMyArray(updatedShoes);
     fetch(`/grails/${deletedItem.id}`, {
       method: "DELETE",
       headers: {
@@ -209,6 +224,17 @@ function Grails() {
       },
     }).then((resp) => resp.json());
   }
+
+
+  const content = (
+    <div className="itemContainer">
+        {instance}
+        {displayedItems.map((item) => (
+          <ItemCard item={item} key={item.id} handleClick={deleteItem} />
+        ))}
+        {displayedItems.length === 0 && <h3>uh oh....</h3>}
+      </div>
+  )
 
   return (
     <div className="closet">
@@ -224,13 +250,7 @@ function Grails() {
       <br />
 
       <hr />
-      <div className="itemContainer">
-        {instance}
-        {displayedItems.map((item) => (
-          <ItemCard item={item} key={item.id} handleClick={deleteItem} />
-        ))}
-        {displayedItems.length === 0 && <h3>uh oh....</h3>}
-      </div>
+      {loading === true ? <Loading /> : content}
       <Modal open={open} onClose={handleClose} size="xs">
         <Modal.Header>
           <Modal.Title>Add Grail</Modal.Title>

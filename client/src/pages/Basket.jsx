@@ -21,7 +21,7 @@ function Basket({ user }) {
 
   return (
     <div className="closet">
-      <h1>{user.username}'s Luandry Basket</h1>
+      <h1>{user.username}'s LaUndry Basket</h1>
       <h3>What needs a wash?</h3>
       <hr />
 
