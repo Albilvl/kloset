@@ -19,6 +19,7 @@ function Grails() {
   const [link, setLink] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [base64TextString, setBase64TextString] = useState("");
 
   const typeOptions = [
     {
@@ -188,6 +189,13 @@ function Grails() {
         if (res.id === undefined) {
           alert("Error");
         } else {
+          setBrand('');
+          setName('');
+          setGrail_type('');
+          setWeather('');
+          setOccasion('');
+          setColor('');
+          setImage('');
           setOpen(false);
           myfetch();
           handleLoading();
@@ -235,6 +243,25 @@ function Grails() {
     </div>
   );
 
+  function handleReaderLoaded (readerEvt) {
+    let binaryString = readerEvt.target.result;
+    setBase64TextString(btoa(binaryString))
+    console.log("file to check:", base64TextString);
+  };
+
+
+   function onChange (e)  {
+    console.log("file to upload:", e.target.files[0]);
+    let file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = handleReaderLoaded.bind();
+      reader.readAsBinaryString(file);
+      setImage("data:image/png;base64," + base64TextString);
+    }
+  };
+
   return (
     <div className="closet">
       <h1>Grails</h1>
@@ -256,6 +283,16 @@ function Grails() {
         </Modal.Header>
         <Modal.Body>
           <Form fluid>
+            <Form.Group controlId="select-10">
+              <Form.ControlLabel>Image</Form.ControlLabel>
+              <input
+                type="file"
+                id="file"
+                name="image"
+                accept=".jpeg, .png, .jpg"
+                onChange={(e) => onChange(e)}
+              />
+            </Form.Group>
             <Form.Group controlId="name-8">
               <Form.ControlLabel>Brand</Form.ControlLabel>
               <Form.Control
@@ -299,10 +336,6 @@ function Grails() {
             <Form.Group controlId="select-10">
               <Form.ControlLabel>Color</Form.ControlLabel>
               <Form.Control name="color" onChange={(e) => setColor(e)} />
-            </Form.Group>
-            <Form.Group controlId="select-10">
-              <Form.ControlLabel>Image</Form.ControlLabel>
-              <Form.Control name="image" onChange={(e) => setImage(e)} />
             </Form.Group>
             <Form.Group controlId="name-8">
               <Form.ControlLabel>Link</Form.ControlLabel>
