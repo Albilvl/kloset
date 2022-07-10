@@ -230,7 +230,7 @@ function Closet({ user }) {
           alert("Error");
         } else {
           setOpen(false);
-          myfetch()
+          myfetch();
           handleLoading();
         }
       });
@@ -273,7 +273,7 @@ function Closet({ user }) {
       {displayedItems.map((item) => (
         <ItemCard item={item} key={item.id} handleClick={deleteItem} />
       ))}
-      {displayedItems.length === 0 && <h3>uh oh....</h3>}
+      {displayedItems.length === 0 && <h3>Uh oh....</h3>}
     </div>
   );
 

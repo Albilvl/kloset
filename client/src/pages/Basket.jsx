@@ -1,9 +1,8 @@
 import { React, useEffect, useState } from "react";
-import ItemCard from "../components/ItemCard";
+import WashCard from "../components/WashCard";
 
 function Basket({ user }) {
-    const[myArray, setMyArray] = useState([])
-
+  const [myArray, setMyArray] = useState([]);
 
   useEffect(() => {
     fetch("/myLaundry", {
@@ -18,7 +17,6 @@ function Basket({ user }) {
       .then((array) => setMyArray(array));
   }, []);
 
-
   return (
     <div className="closet">
       <h1>{user.username}'s LaUndry Basket</h1>
@@ -27,7 +25,12 @@ function Basket({ user }) {
 
       <div className="itemContainer">
         {myArray.map((item) => (
-          <ItemCard item={item} key={item.id}  />
+          <WashCard
+            item={item}
+            key={item.id}
+            setMyArray={setMyArray}
+            myArray={myArray}
+          />
         ))}
         {myArray.length === 0 && <h3>Everything's clean....</h3>}
       </div>

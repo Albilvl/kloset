@@ -189,27 +189,27 @@ function Grails() {
           alert("Error");
         } else {
           setOpen(false);
-          myfetch()
+          myfetch();
           handleLoading();
         }
       });
   }
 
-function myfetch() {
-  fetch("/myGrails", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Bearer ${localStorage.token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((array) => setMyArray(array));
-}
-   
+  function myfetch() {
+    fetch("/myGrails", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${localStorage.token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((array) => setMyArray(array));
+  }
+
   useEffect(() => {
-    myfetch()
+    myfetch();
   }, []);
 
   function deleteItem(deletedItem) {
@@ -225,16 +225,15 @@ function myfetch() {
     }).then((resp) => resp.json());
   }
 
-
   const content = (
     <div className="itemContainer">
-        {instance}
-        {displayedItems.map((item) => (
-          <ItemCard item={item} key={item.id} handleClick={deleteItem} />
-        ))}
-        {displayedItems.length === 0 && <h3>uh oh....</h3>}
-      </div>
-  )
+      {instance}
+      {displayedItems.map((item) => (
+        <ItemCard item={item} key={item.id} handleClick={deleteItem} />
+      ))}
+      {displayedItems.length === 0 && <h3>uh oh....</h3>}
+    </div>
+  );
 
   return (
     <div className="closet">
