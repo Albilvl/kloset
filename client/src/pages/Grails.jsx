@@ -160,7 +160,7 @@ function Grails() {
 
   function handleLoading() {
     setLoading(true);
-    setTimeout(() => setLoading(false), 1000);
+    setTimeout(() => setLoading(false), 3000);
   }
 
   function addItem() {

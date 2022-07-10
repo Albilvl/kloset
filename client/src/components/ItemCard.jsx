@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import { AiOutlineShoppingCart } from "react-icons/ai";
 import { MdOutlineLocalLaundryService } from "react-icons/md";
 import {
   Button,
@@ -60,7 +61,9 @@ function ItemCard({ item, handleClick }) {
               />
             </>
           ) : (
-            " "
+            <a href={item.link} target="blank">
+              <AiOutlineShoppingCart style={{ cursor: "pointer" }} />
+            </a>
           )}
           <br />
           <Button
