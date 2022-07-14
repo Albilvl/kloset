@@ -28,12 +28,18 @@ function Closet({ user }) {
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [base64TextString, setBase64TextString] = useState("");
+  const [pic, setPic] = useState({});
 
   const [occasionFilter, setOccasionFilter] = useState("");
   const [weatherFilter, setWeatherFilter] = useState("");
   const [item_typeFilter, setItem_TypeFilter] = useState("");
 
   const typeOptions = [
+    {
+      label: "Hat",
+      value: "Accessories",
+      style: "Accessories",
+    },
     {
       label: "Jacket",
       value: "Jacket",
@@ -57,11 +63,6 @@ function Closet({ user }) {
     {
       label: "Flannel",
       value: "Flannel",
-      style: "Top",
-    },
-    {
-      label: "Hat",
-      value: "Hat",
       style: "Top",
     },
     {
@@ -104,9 +105,28 @@ function Closet({ user }) {
       value: "Formal",
       style: "Shoes",
     },
+    {
+      label: "Handbag",
+      value: "Handbag",
+      style: "Bag",
+    },
+    {
+      label: "Backpack",
+      value: "Bag",
+      style: "Bag",
+    },
+    {
+      label: "Messenger and Crossbody",
+      value: "Messenger and Crossbody",
+      style: "Bag",
+    },
   ];
 
   const weatherOptions = [
+    {
+      label: "All Weather",
+      value: "All Weather",
+    },
     {
       label: "Cold",
       value: "Cold",
@@ -142,6 +162,8 @@ function Closet({ user }) {
 
   const handleClose = () => {
     setOpen(false);
+    setBase64TextString("");
+    setPic({});
   };
   const handleOpen = () => {
     setOpen(true);
@@ -230,15 +252,15 @@ function Closet({ user }) {
         if (res.id === undefined) {
           alert("Error");
         } else {
-          setBrand('');
-          setName('');
-          setItem_type('');
-          setWeather('');
-          setOccasion('');
-          setColor('');
-          setDirty('');
-          setImage('');
-          setOpen(false);
+          setBrand("");
+          setName("");
+          setItem_type("");
+          setWeather("");
+          setOccasion("");
+          setColor("");
+          setDirty("");
+          setImage("");
+          handleClose();
           myfetch();
           handleLoading();
         }
@@ -273,7 +295,7 @@ function Closet({ user }) {
         Authorization: `Bearer ${localStorage.token}`,
       },
     }).then((resp) => resp.json());
-    handleLoading();
+    // handleLoading();
   }
 
   const content = (
@@ -286,16 +308,16 @@ function Closet({ user }) {
     </div>
   );
 
- function handleReaderLoaded (readerEvt) {
+  function handleReaderLoaded(readerEvt) {
     let binaryString = readerEvt.target.result;
-    setBase64TextString(btoa(binaryString))
+    setBase64TextString(btoa(binaryString));
     console.log("file to check:", base64TextString);
-  };
+  }
 
-
-   function onChange (e)  {
+  function onChange(e) {
     console.log("file to upload:", e.target.files[0]);
     let file = e.target.files[0];
+    setPic(file);
 
     if (file) {
       const reader = new FileReader();
@@ -303,8 +325,17 @@ function Closet({ user }) {
       reader.readAsBinaryString(file);
       setImage("data:image/png;base64," + base64TextString);
     }
-  };
+  }
 
+  function upload() {
+    if (pic.name !== undefined) {
+      const reader = new FileReader();
+      reader.onload = handleReaderLoaded.bind();
+      reader.readAsBinaryString(pic);
+      setImage("data:image/png;base64," + base64TextString);
+      alert("Upload successful");
+    }
+  }
 
   return (
     <div className="closet">
@@ -319,8 +350,11 @@ function Closet({ user }) {
       />
       <br />
       <>
-        Need an outfit...{" "}
-        <select onChange={(e) => setItem_TypeFilter(e.target.value)}>
+        what to wear ... <Divider vertical />
+        <select
+          onChange={(e) => setItem_TypeFilter(e.target.value)}
+          style={{ color: "black" }}
+        >
           <option value="">Any</option>
           <option value="Jacket">Jacket</option>
           <option value="Coat">coat</option>
@@ -334,19 +368,31 @@ function Closet({ user }) {
           <option value="Jacket">Jacket</option>
           <option value="Leggings">leggings</option>
           <option value="Sneakers">sneakers</option>
-          <option value="Sldies">slides</option>
-          <option value="Formal">formal</option>
+          <option value="Slides">slides</option>
+          <option value="Handbag">Handbag</option>
+          <option value="Backpack">Backpack</option>
+          <option value="Messenger and Crossbody">
+            Messenger and Crossbody
+          </option>
+          <option value="Accessories">Accessories</option>
         </select>
         <Divider vertical />
-        <select onChange={(e) => setWeatherFilter(e.target.value)}>
-          <option value="">For Any Weather</option>
+        <select
+          onChange={(e) => setWeatherFilter(e.target.value)}
+          style={{ color: "black" }}
+        >
+          <option value=""> Any </option>
           <option value="Cold">Cold</option>
+          <option value="All Weather">All Weather</option>
           <option value="Cool">Cool</option>
           <option value="Warm">Warm</option>
           <option value="Hot">Hot</option>
         </select>
         <Divider vertical />
-        <select onChange={(e) => setOccasionFilter(e.target.value)}>
+        <select
+          onChange={(e) => setOccasionFilter(e.target.value)}
+          style={{ color: "black" }}
+        >
           <option value="">All</option>
           <option value="Formal">Formal</option>
           <option value="Casual">Casual</option>
@@ -367,9 +413,13 @@ function Closet({ user }) {
                 type="file"
                 id="file"
                 name="image"
-                accept=".jpeg, .png, .jpg"
+                accept="image/*"
                 onChange={(e) => onChange(e)}
               />
+              <Divider vertical />
+              <Button appearance="primary" onClick={upload}>
+                Upload
+              </Button>
             </Form.Group>
             <Form.Group controlId="name-8">
               <Form.ControlLabel>Brand</Form.ControlLabel>

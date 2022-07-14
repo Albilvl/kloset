@@ -53,6 +53,10 @@ function App() {
     setUser({});
     setLoggedIn(false);
     localStorage.token = "";
+    localStorage.color1 = "";
+    localStorage.color2 = "";
+    setColorA("rgb(3,127,255)")
+    setColorB("rgb(225,60,60)")
   }
 
   // {backgroundImage: `linear-gradient(135deg, rgb(3,127,255),rgb(3,127,255) )`}

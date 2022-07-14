@@ -15,6 +15,8 @@ function Signup() {
   const [avatar, setAvatar] = useState("");
   const [color1, setColor1] = useState("");
   const [color2, setColor2] = useState("");
+  const [base64TextString, setBase64TextString] = useState("");
+  const [pic, setPic] = useState({});
 
   function handleSubmit() {
 
@@ -60,6 +62,35 @@ function Signup() {
       });
   }
 
+  function handleReaderLoaded(readerEvt) {
+    let binaryString = readerEvt.target.result;
+    setBase64TextString(btoa(binaryString));
+    console.log("file to check:", base64TextString);
+  }
+
+  function onChange(e) {
+    console.log("file to upload:", e.target.files[0]);
+    let file = e.target.files[0];
+    setPic(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = handleReaderLoaded.bind();
+      reader.readAsBinaryString(file);
+      setAvatar("data:image/png;base64," + base64TextString);
+    }
+  }
+
+  function upload() {
+    if (pic.name !== undefined) {
+      const reader = new FileReader();
+      reader.onload = handleReaderLoaded.bind();
+      reader.readAsBinaryString(pic);
+      setAvatar("data:image/png;base64," + base64TextString);
+      alert("Upload successful");
+    }
+  }
+
   return (
     <div className="loginBox">
       <h1>
@@ -89,7 +120,18 @@ function Signup() {
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>Avatar</Form.ControlLabel>
-              <Form.Control name="avatar" onChange={(e) => setAvatar(e)} />
+              <input
+                type="file"
+                id="file"
+                name="image"
+                accept="image/*"
+                onChange={(e) => onChange(e)}
+              />
+              <Divider vertical />
+              <Button appearance="primary" onClick={upload}>
+                Upload
+              </Button>
+              {/* <Form.Control name="avatar" onChange={(e) => setAvatar(e)} /> */}
             </Form.Group>
             <Form.Group>
               <Form.ControlLabel>Choose your Colors</Form.ControlLabel>

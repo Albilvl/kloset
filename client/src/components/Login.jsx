@@ -27,11 +27,11 @@ function Login(props) {
         if (res.jwt !== undefined) {
           console.log(res.jwt);
           localStorage.token = res.jwt;
-          // localStorage.color1 = res.user.color1
-          // localStorage.color2 = res.user.color2
+          localStorage.color1 = res.user.color1
+          localStorage.color2 = res.user.color2
           props.setCurrentUser(res.user);
-          // props.setColorA(res.user.color1)
-          // props.setColorB(res.user.color2)
+          props.setColorA(localStorage.color1)
+          props.setColorB(localStorage.color2)
           navigate("/closet");
         } else {
           alert(res.error);

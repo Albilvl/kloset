@@ -1,6 +1,15 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Modal, Panel, SelectPicker } from "rsuite";
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Panel,
+  SelectPicker,
+} from "rsuite";
+import GrailCard from "../components/GrailCard";
 import ItemCard from "../components/ItemCard";
 import Loading from "../components/Loading";
 
@@ -20,8 +29,14 @@ function Grails() {
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const [base64TextString, setBase64TextString] = useState("");
+  const [pic, setPic] = useState({});
 
   const typeOptions = [
+    {
+      label: "Hat",
+      value: "Accessories",
+      style: "Accessories",
+    },
     {
       label: "Jacket",
       value: "Jacket",
@@ -45,11 +60,6 @@ function Grails() {
     {
       label: "Flannel",
       value: "Flannel",
-      style: "Top",
-    },
-    {
-      label: "Hat",
-      value: "Hat",
       style: "Top",
     },
     {
@@ -92,9 +102,28 @@ function Grails() {
       value: "Formal",
       style: "Shoes",
     },
+    {
+      label: "Handbag",
+      value: "Handbag",
+      style: "Bag",
+    },
+    {
+      label: "Backpack",
+      value: "Backpack",
+      style: "Bag",
+    },
+    {
+      label: "Messenger and Crossbody",
+      value: "Messenger and Crossbody",
+      style: "Bag",
+    },
   ];
 
   const weatherOptions = [
+    {
+      label: "All Weather",
+      value: "All Weather",
+    },
     {
       label: "Cold",
       value: "Cold",
@@ -122,10 +151,16 @@ function Grails() {
       label: "Casual",
       value: "Casual",
     },
+    {
+      label: "Both",
+      value: "Both",
+    },
   ];
 
   const handleClose = () => {
     setOpen(false);
+    setBase64TextString("");
+    setPic({});
   };
   const handleOpen = () => {
     setOpen(true);
@@ -160,7 +195,7 @@ function Grails() {
 
   function handleLoading() {
     setLoading(true);
-    setTimeout(() => setLoading(false), 3000);
+    setTimeout(() => setLoading(false), 1000);
   }
 
   function addItem() {
@@ -189,14 +224,14 @@ function Grails() {
         if (res.id === undefined) {
           alert("Error");
         } else {
-          setBrand('');
-          setName('');
-          setGrail_type('');
-          setWeather('');
-          setOccasion('');
-          setColor('');
-          setImage('');
-          setOpen(false);
+          setBrand("");
+          setName("");
+          setGrail_type("");
+          setWeather("");
+          setOccasion("");
+          setColor("");
+          setImage("");
+          handleClose();
           myfetch();
           handleLoading();
         }
@@ -237,22 +272,22 @@ function Grails() {
     <div className="itemContainer">
       {instance}
       {displayedItems.map((item) => (
-        <ItemCard item={item} key={item.id} handleClick={deleteItem} />
+        <GrailCard item={item} key={item.id} handleClick={deleteItem} />
       ))}
       {displayedItems.length === 0 && <h3>uh oh....</h3>}
     </div>
   );
 
-  function handleReaderLoaded (readerEvt) {
+  function handleReaderLoaded(readerEvt) {
     let binaryString = readerEvt.target.result;
-    setBase64TextString(btoa(binaryString))
+    setBase64TextString(btoa(binaryString));
     console.log("file to check:", base64TextString);
-  };
+  }
 
-
-   function onChange (e)  {
+  function onChange(e) {
     console.log("file to upload:", e.target.files[0]);
     let file = e.target.files[0];
+    setPic(file);
 
     if (file) {
       const reader = new FileReader();
@@ -260,7 +295,17 @@ function Grails() {
       reader.readAsBinaryString(file);
       setImage("data:image/png;base64," + base64TextString);
     }
-  };
+  }
+
+  function upload() {
+    if (pic.name !== undefined) {
+      const reader = new FileReader();
+      reader.onload = handleReaderLoaded.bind();
+      reader.readAsBinaryString(pic);
+      setImage("data:image/png;base64," + base64TextString);
+      alert("Upload successful");
+    }
+  }
 
   return (
     <div className="closet">
@@ -289,9 +334,13 @@ function Grails() {
                 type="file"
                 id="file"
                 name="image"
-                accept=".jpeg, .png, .jpg"
+                accept="image/*"
                 onChange={(e) => onChange(e)}
               />
+              <Divider vertical />
+              <Button appearance="primary" onClick={upload}>
+                Upload
+              </Button>
             </Form.Group>
             <Form.Group controlId="name-8">
               <Form.ControlLabel>Brand</Form.ControlLabel>

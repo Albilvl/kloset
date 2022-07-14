@@ -1,17 +1,8 @@
 import { React, useState } from "react";
 import { AiOutlineShoppingCart } from "react-icons/ai";
-import { MdOutlineLocalLaundryService } from "react-icons/md";
-import {
-  Button,
-  Divider,
-  Form,
-  Modal,
-  Panel,
-  SelectPicker,
-  Toggle,
-} from "rsuite";
+import { Button, Divider, Form, Modal, Panel, SelectPicker } from "rsuite";
 
-function ItemCard({ item, handleClick }) {
+function GrailCard({ item, handleClick }) {
   const [open, setOpen] = useState(false);
   const [updatedClean, setUpdatedClean] = useState(!item.dirty);
 
@@ -44,59 +35,15 @@ function ItemCard({ item, handleClick }) {
     });
   }
 
-  const isDirty = (
-    <Toggle
-      size="sm"
-      checkedChildren="DIRTY"
-      unCheckedChildren="CLEAN"
-      onClick={handleLaundry}
-      defaultChecked
-    />
-  );
-
-  const isClean = (
-    <Toggle
-      size="sm"
-      checkedChildren="DIRTY"
-      unCheckedChildren="CLEAN"
-      onClick={handleLaundry}
-    />
-  );
-
-  function laundrySwitch() {
-    <>
-    item.dirty === false ? { isClean } : { isDirty }
-    </>
-  }
-
   return (
     <div className="itemCard">
       <Panel shaded bodyFill style={{ display: "inline-block", width: 240 }}>
         <img src={item.image} height="240" />
         <Panel header={item.brand} className="rs-theme-dark">
           <p>{item.name}</p>
-          {item.dirty === true ? (
-            <>
-              <MdOutlineLocalLaundryService />
-              <Toggle
-                size="sm"
-                checkedChildren="DIRTY"
-                unCheckedChildren="CLEAN"
-                onClick={handleLaundry}
-                defaultChecked
-              />
-            </>
-          ) : (
-            <>
-            <MdOutlineLocalLaundryService />
-            <Toggle
-              size="sm"
-              checkedChildren="DIRTY"
-              unCheckedChildren="CLEAN"
-              onClick={handleLaundry}
-            />
-          </>
-          )}
+          <a href={item.link} target="blank">
+            <AiOutlineShoppingCart style={{ cursor: "pointer" }} />
+          </a>
           <br />
           <Button
             appearance="primary"
@@ -153,4 +100,4 @@ function ItemCard({ item, handleClick }) {
   );
 }
 
-export default ItemCard;
+export default GrailCard;
